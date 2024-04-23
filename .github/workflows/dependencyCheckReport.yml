@@ -6,12 +6,7 @@ jobs:
     name: depecheck_test
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set up Java
-        uses: actions/setup-java@v2
-        with:
-         java-version: '11'
-        
+        uses: actions/checkout@v2       
            
       - name: Run Gradle build
         run: ./gradlew build --no-daemon --console=plain
