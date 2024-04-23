@@ -1,17 +1,32 @@
-name: Java CI with Gradle
-
-on: workflow_dispatch
+on: push
 
 jobs:
-  depCheck:
+  depchecktest:
     runs-on: ubuntu-latest
-
+    name: depecheck_test
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Java
+        uses: actions/setup-java@v2
         with:
-          java-version: 1.8
-      - uses: eskatos/gradle-command-action@v1
+         java-version: '11'
+        
+           
+      - name: Run Gradle build
+        run: ./gradlew build --no-daemon --console=plain
+        
+      - name: Depcheck
+        uses: dependency-check/Dependency-Check_Action@main
+        id: Depcheck
         with:
-          arguments: dependencyCheckAnalyze
+          project: 'a-vulnerable-project'
+          path: '.'
+          format: 'HTML'
+          #out: 'reports' # this is the default, no need to specify unless you wish to override it
+         
+      - name: Upload Test results
+        uses: actions/upload-artifact@master
+        with:
+           name: Depcheck report
+           path: ${{github.workspace}}/reports
